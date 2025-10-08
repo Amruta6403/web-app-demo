@@ -1,28 +1,11 @@
-
 pipeline {
-    agent any
-    stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/yourusername/web-app-demo.git'
-            }
-        }
-        stage('Build') {
-            steps {
-                echo 'Build Step: Checking files'
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Test Step: Validate HTML (optional)'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploy Step: Copy files to web server'
-                // Windows: bat "xcopy /Y index.html C:\\inetpub\\wwwroot\\"
-                // Linux: sh "cp index.html /var/www/html/"
-            }
-        }
-    }
+  agent any
+  environment { DEPLOY_DIR = 'C:\\inetpub\\wwwroot' }
+  stages {
+    stage('Checkout') { steps { git branch: 'main', url: 'https://github.com/yourusername/web-app-demo.git' } }
+    stage('Build') { steps { bat 'echo Build: listing && dir' } }
+    stage('Test') { steps { bat 'where tidy || echo tidy not found' } }
+    stage('Deploy') { steps { bat 'mkdir deployed 2>nul || exit 0 & xcopy /Y index.html deployed\\' } }
+  }
 }
+
